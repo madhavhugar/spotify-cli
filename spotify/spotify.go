@@ -86,6 +86,18 @@ func TrackAudioFeatures(ID string) []*spotify.AudioFeatures {
 	return features
 }
 
+func TrackAudioAnalysis(ID string) *spotify.AudioAnalysis {
+	client, err := new()
+	if err != nil {
+		log.Fatalf("error instantiating spotify client")
+	}
+	result, err := client.GetAudioAnalysis(spotify.ID(ID))
+	if err != nil {
+		log.Fatalf("could not get audio analysis ID - %s: %v", ID, err)
+	}
+	return result
+}
+
 func All(name string) ([]spotify.FullTrack, []spotify.SimpleAlbum, []spotify.FullArtist, []spotify.SimplePlaylist) {
 	client, err := new()
 	if err != nil {

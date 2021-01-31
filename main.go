@@ -13,6 +13,7 @@ var playlist = flag.String("playlist", "", "playlist name")
 var all = flag.String("all", "", "discover track, artist, album or playlist name")
 var id = flag.String("id", "", "spotify track ID")
 var audioFeatures = flag.Bool("features", false, "print track features, track ID must be provided")
+var audioAnalysis = flag.Bool("analysis", false, "print track analysis, track ID must be provided")
 
 func main() {
 	flag.Parse()
@@ -58,5 +59,13 @@ func main() {
 			fmt.Printf("\t Dancability: %f - Energy: %f - Instrumentalness: %f - Duration: %d\n",
 				item.Danceability, item.Energy, item.Instrumentalness, item.Duration)
 		}
+	}
+
+	if *audioAnalysis && *id != "" {
+		fmt.Println("Audio track analysis")
+		analysis := spotify.TrackAudioAnalysis(*id)
+		fmt.Println("Bars", analysis.Bars)
+		fmt.Println("Beats", analysis.Beats)
+		fmt.Println("Meta", analysis.Meta)
 	}
 }
