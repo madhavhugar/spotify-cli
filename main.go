@@ -9,8 +9,12 @@ import (
 var album = flag.String("album", "", "album name")
 var artist = flag.String("artist", "", "artist name")
 var track = flag.String("track", "", "track name")
-var playlist = flag.String("playlist", "", "playlist name")
 var all = flag.String("all", "", "discover track, artist, album or playlist name")
+
+var playlist = flag.String("playlist", "", "playlist name")
+var playlistID = flag.String("playlistId", "", "playlist ID")
+var showPlaylistTracks = flag.Bool("showTracks", false, "show playlist tracks, playlist ID must be provided")
+
 var id = flag.String("id", "", "spotify track ID")
 var audioFeatures = flag.Bool("features", false, "print track features, track ID must be provided")
 var audioAnalysis = flag.Bool("analysis", false, "print track analysis, track ID must be provided")
@@ -42,7 +46,7 @@ func main() {
 	if *playlist != "" {
 		fmt.Println("Playlists:")
 		for _, item := range spotify.Playlists(*playlist) {
-			fmt.Println("\t", item.Name)
+			fmt.Printf("\t%s - %s\n", item.ID, item.Name)
 		}
 	}
 
@@ -67,5 +71,23 @@ func main() {
 		fmt.Println("Bars", analysis.Bars)
 		fmt.Println("Beats", analysis.Beats)
 		fmt.Println("Meta", analysis.Meta)
+	}
+
+	if *showPlaylistTracks && *playlistID != "" {
+		fmt.Println("Playlist tracks")
+		name, tracks := spotify.PlaylistTracks(*playlistID)
+		fmt.Println(name)
+		for _, item := range tracks {
+			// ensure tracks with multiple artists are rendered properly
+			if len(item.Track.Artists) > 1 {
+				fmt.Printf("\t%s", item.Track.Artists[0].Name)
+				for _, artist := range item.Track.Artists[1:] {
+					fmt.Printf(", %s ", artist.Name)
+				}
+				fmt.Printf("- %s\n", item.Track.Name)
+			} else {
+				fmt.Printf("\t%s- %s\n", item.Track.Artists[0].Name, item.Track.Name)
+			}
+		}
 	}
 }

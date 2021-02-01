@@ -74,6 +74,18 @@ func Playlists(name string) []spotify.SimplePlaylist {
 	return results.Playlists.Playlists
 }
 
+func PlaylistTracks(ID string) (string, []spotify.PlaylistTrack) {
+	client, err := new()
+	if err != nil {
+		log.Fatalf("error instantiating spotify client")
+	}
+	playlist, err := client.GetPlaylist(spotify.ID(ID))
+	if err != nil {
+		log.Fatalf("could not get playlist info ID: %s - %v", ID, err)
+	}
+	return playlist.Name, playlist.Tracks.Tracks
+}
+
 func TrackAudioFeatures(ID string) []*spotify.AudioFeatures {
 	client, err := new()
 	if err != nil {
